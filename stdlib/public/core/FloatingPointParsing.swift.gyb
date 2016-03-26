@@ -12,6 +12,8 @@
 
 import SwiftShims
 
+#if !KERNELLIB
+
 %{
 
 allFloatBits = [32, 64, 80]
@@ -148,3 +150,5 @@ extension ${Self} : LosslessStringConvertible {
 % end
 
 % end
+
+#endif // !KERNELLIB

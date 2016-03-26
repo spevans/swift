@@ -3,6 +3,6 @@ add_swift_library(swiftSwiftExperimental ${SWIFT_STDLIB_LIBRARY_BUILD_TYPES} IS_
   # filename.
   SwiftExperimental.swift
 
-  SWIFT_COMPILE_FLAGS ${STDLIB_SIL_SERIALIZE_ALL} -parse-stdlib
+  SWIFT_COMPILE_FLAGS ${STDLIB_SIL_SERIALIZE_ALL} ${STDLIB_DISABLE_REDZONE} -parse-stdlib
   INSTALL_IN_COMPONENT stdlib-experimental)
 

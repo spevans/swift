@@ -24,7 +24,7 @@ add_swift_library(swiftStdlibUnittest ${SWIFT_STDLIB_LIBRARY_BUILD_TYPES} IS_STD
   OpaqueIdentityFunctions.cpp
   OpaqueIdentityFunctions.swift
   RaceTest.swift
-  Statistics.swift
+#  Statistics.swift
   StdlibCoreExtras.swift
   StringConvertible.swift.gyb
   TestHelpers.swift

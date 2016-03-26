@@ -54,9 +54,9 @@ set(SWIFTLIB_ESSENTIAL
   FixedPoint.swift.gyb
   FlatMap.swift
   Flatten.swift.gyb
-  FloatingPoint.swift.gyb
-  FloatingPointParsing.swift.gyb
-  FloatingPointTypes.swift.gyb
+#  FloatingPoint.swift.gyb
+#  FloatingPointParsing.swift.gyb
+#  FloatingPointTypes.swift.gyb
   Hashable.swift
   HashedCollections.swift.gyb
   # WORKAROUND: This file name is not sorted alphabetically in the list because
@@ -144,11 +144,11 @@ set(SWIFTLIB_ESSENTIAL
 set(SWIFTLIB_SOURCES
   ${SWIFTLIB_ESSENTIAL}
   ### PLEASE KEEP THIS LIST IN ALPHABETICAL ORDER ###
-  Availability.swift
+  #Availability.swift
   CollectionOfOne.swift
   ExistentialCollection.swift.gyb
   Mirror.swift
-  CommandLine.swift
+  #CommandLine.swift
   SliceBuffer.swift
   Tuple.swift.gyb
   UnfoldSequence.swift

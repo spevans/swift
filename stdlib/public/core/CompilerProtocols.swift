@@ -652,11 +652,13 @@ public protocol _ExpressibleByStringInterpolation {
   init<T>(stringInterpolationSegment expr: T)
 }
 
+#if !KERNELLIB
 /// Conforming types can be initialized with color literals (e.g.
 /// `#colorLiteral(red: 1, green: 0, blue: 0, alpha: 1)`).
 public protocol _ExpressibleByColorLiteral {
   init(colorLiteralRed red: Float, green: Float, blue: Float, alpha: Float)
 }
+#endif
 
 /// Conforming types can be initialized with image literals (e.g.
 /// `#imageLiteral(resourceName: "hi.png")`).

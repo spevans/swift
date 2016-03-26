@@ -4,7 +4,8 @@ set(swift_platform_sources
     Platform.swift
     Misc.c
     TiocConstants.swift
-    tgmath.swift.gyb)
+    #tgmath.swift.gyb
+    )
 
 add_swift_library(swiftDarwin ${SWIFT_STDLIB_LIBRARY_BUILD_TYPES} IS_SDK_OVERLAY
     Darwin.swift

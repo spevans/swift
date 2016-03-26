@@ -1,12 +1,12 @@
 add_swift_library(swiftSwiftPrivateLibcExtras ${SWIFT_STDLIB_LIBRARY_BUILD_TYPES} IS_STDLIB
   # This file should be listed the first.  Module name is inferred from the
   # filename.
-  SwiftPrivateLibcExtras.swift
+  #SwiftPrivateLibcExtras.swift
   Subprocess.c
-  Subprocess.swift
+  #Subprocess.swift
 
   SWIFT_MODULE_DEPENDS SwiftPrivate
-  SWIFT_COMPILE_FLAGS ${STDLIB_SIL_SERIALIZE_ALL}
+  SWIFT_COMPILE_FLAGS ${STDLIB_SIL_SERIALIZE_ALL} ${STDLIB_DISABLE_REDZONE}
   SWIFT_MODULE_DEPENDS_OSX Darwin
   SWIFT_MODULE_DEPENDS_IOS Darwin
   SWIFT_MODULE_DEPENDS_TVOS Darwin

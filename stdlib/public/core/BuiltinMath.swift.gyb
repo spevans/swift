@@ -10,6 +10,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if !KERNELLIB
+
 %{
 
 # Don't need 64-bit (Double/CDouble) overlays. The ordinary C imports work fine.
@@ -69,6 +71,9 @@ public func _${ufunc}(_ x: ${T}) -> ${T} {
 
 % end
 
+#endif // !KERNELLIB
+
 // ${'Local Variables'}:
 // eval: (read-only-mode 1)
 // End:
+

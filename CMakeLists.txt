@@ -252,7 +252,7 @@ option(SWIFT_CHECK_INCREMENTAL_COMPILATION
 # User-configurable experimental options.  Do not use in production builds.
 #
 
-set(SWIFT_EXPERIMENTAL_EXTRA_FLAGS "" CACHE STRING
+set(SWIFT_EXPERIMENTAL_EXTRA_FLAGS  "-Xfrontend" "-disable-red-zone" "-Xcc" "-mno-red-zone" "-Xcc" "-mno-mmx" "-Xcc" "-mno-sse" "-Xcc" "-mno-sse2" "-D" "KERNELLIB" CACHE STRING
     "Extra flags to pass when compiling swift files.  Use this option *only* for one-off experiments")
 
 set(SWIFT_EXPERIMENTAL_EXTRA_REGEXP_FLAGS "" CACHE STRING
@@ -272,6 +272,10 @@ option(SWIFT_STDLIB_ENABLE_RESILIENCE
 option(SWIFT_STDLIB_SIL_SERIALIZE_ALL
     "Build the standard libraries and overlays serializing all method bodies"
     TRUE)
+
+option(SWIFT_STDLIB_DISABLE_REDZONE
+    "Disable Red Zone code generated when building the standard library"
+    FALSE)
 
 if(SWIFT_SERIALIZE_STDLIB_UNITTEST AND SWIFT_STDLIB_ENABLE_RESILIENCE)
   message(WARNING "Ignoring SWIFT_SERIALIZE_STDLIB_UNITTEST because SWIFT_STDLIB_ENABLE_RESILIENCE is set")
