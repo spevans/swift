@@ -386,6 +386,10 @@ function(_compile_swift_files dependency_target_out_var_name)
     endif()
   endif()
 
+  if(SWIFT_STDLIB_DISABLE_REDZONE)
+    list(APPEND swift_flags "-Xfrontend" "-disable-red-zone" "-Xcc" "-mno-red-zone")
+  endif()
+
   if(SWIFTFILE_IS_SDK_OVERLAY)
     list(APPEND swift_flags "-autolink-force-load")
   endif()

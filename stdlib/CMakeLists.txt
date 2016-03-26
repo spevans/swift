@@ -33,6 +33,12 @@ else()
   endif()
 endif()
 
+if (SWIFT_STDLIB_DISABLE_REDZONE)
+  set(STDLIB_DISABLE_REDZONE "-Xfrontend" "-disable-red-zone")
+else()
+  set(STDLIB_DISABLE_REDZONE)
+endif()
+
 add_subdirectory(public)
 add_subdirectory(internal)
 add_subdirectory(private)

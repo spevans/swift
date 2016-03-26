@@ -16,5 +16,5 @@ add_swift_library(swiftSwiftPrivateLibcExtras SHARED IS_STDLIB
   Subprocess.swift
 
   SWIFT_MODULE_DEPENDS ${swift_private_darwin_extras_module_depends}
-  SWIFT_COMPILE_FLAGS ${STDLIB_SIL_SERIALIZE_ALL}
+  SWIFT_COMPILE_FLAGS ${STDLIB_SIL_SERIALIZE_ALL} ${STDLIB_DISABLE_REDZONE}
   INSTALL_IN_COMPONENT stdlib-experimental)

@@ -8,7 +8,7 @@ add_swift_library(swiftSwiftPrivate SHARED IS_STDLIB
   PRNG.swift
   ShardedAtomicCounter.swift
 
-  SWIFT_COMPILE_FLAGS ${STDLIB_SIL_SERIALIZE_ALL}
+  SWIFT_COMPILE_FLAGS ${STDLIB_SIL_SERIALIZE_ALL} ${STDLIB_DISABLE_REDZONE}
   PRIVATE_LINK_LIBRARIES ${swift_private_private_link_libraries}
   INSTALL_IN_COMPONENT stdlib-experimental)
 
