@@ -1,0 +1,47 @@
+Swift and stdlib suitable for firmware / kernel coding
+
+
+This repo is a fork of the apple/swift and contains two main changes
+
+1. a `-disable-red-zone` compiler option to `swiftc` to compile code without
+using the red zone
+
+2. Stdlib has been modified to remove:
+
+- All floating code code and types `(Float32/Float64)`
+
+- Math functions and some extra IO calls that are only needed for unix userland
+programs.
+
+This allows stdlib to be compiled without using SSE registers or instructions
+
+
+The [kernel-lib](https://github.com/spevans/swift/tree/kernel-lib)
+branch can be cloned from https://github.com/spevans/swift.git The other repos
+to clone are from https://github.com/apple
+
+| repo                      | branch         |
+|---------------------------|----------------|
+| clang                     | stable         |
+| cmark                     | master         |
+| llvm                      | stable         |
+| ninja                     | master         |
+| swift                     | kernel-lib     |
+
+To build the compiler and stdlib and install in ~/swift-kernel
+
+
+```
+HOME=~ SWIFT_BUILD_ROOT=~/swift/build ./utils/build-script --assertions --no-swift-stdlib-assertions --build-subdir=buildbot_linux --release -- --swift-enable-ast-verifier=0 --install-swift --install-prefix=/usr '--swift-install-components=autolink-driver;compiler;clang-builtin-headers;stdlib;sdk-overlay;license' --build-swift-static-stdlib --build-swift-stdlib-unittest-extra --skip-test-lldb --install-destdir=$HOME/swift-kernel --installable-package=$HOME/swift/swift-`date '+%F-%X'`.tar.gz --reconfigure  --verbose-build 2>&1|tee build.log
+```
+
+Because of the code removed from Stdlib, no tests can be run on the result
+and Foundation cannot be built either.
+
+
+When compiling .swift files use the following arguments to disable red zone and
+SSE
+
+-Xfrontend -disable-red-zone -Xcc -mno-red-zone -Xcc -mno-mmx -Xcc -mno-sse -Xcc -mno-sse2
+
+Then link with `~/swift-kernel/usr/lib/swift_static/linux/libswiftCore.a`
