@@ -55,7 +55,7 @@ IRGenFunction::IRGenFunction(IRGenModule &IGM, llvm::Function *Fn,
   if (IGM.IRGen.Opts.Sanitize == SanitizerKind::Thread)
     Fn->addFnAttr(llvm::Attribute::SanitizeThread);
 
-  if (IGM.Opts.NoRedZone)
+  if (IGM.IRGen.Opts.NoRedZone)
     Fn->addFnAttr(llvm::Attribute::NoRedZone);
 
   emitPrologue();
