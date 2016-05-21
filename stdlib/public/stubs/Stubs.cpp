@@ -255,7 +255,6 @@ extern "C" uint64_t swift_float80ToString(char *Buffer, size_t BufferLength,
   return swift_floatingPointToString<long double>(Buffer, BufferLength, Value,
                                                   "%0.*Lg", Debug);
 }
-#endif // KERNELLIB
 
 /// \param[out] LinePtr Replaced with the pointer to the malloc()-allocated
 /// line.  Can be NULL if no characters were read. This buffer should be
@@ -315,7 +314,6 @@ ssize_t swift::swift_stdlib_readLine_stdin(unsigned char **LinePtr) {
 #endif
 }
 
-#ifndef KERNELLIB
 SWIFT_CC(swift) SWIFT_RUNTIME_STDLIB_INTERFACE
 extern "C" float _swift_fmodf(float lhs, float rhs) {
     return fmodf(lhs, rhs);

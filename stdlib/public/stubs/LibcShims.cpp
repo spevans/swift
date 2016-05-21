@@ -57,6 +57,7 @@ int swift::_swift_stdlib_memcmp(const void *s1, const void *s2,
   return memcmp(s1, s2, n);
 }
 
+#if !KERNELLIB
 __swift_ssize_t
 swift::_swift_stdlib_read(int fd, void *buf, __swift_size_t nbyte) {
 #if defined(_MSC_VER)
@@ -82,6 +83,7 @@ int swift::_swift_stdlib_close(int fd) {
   return close(fd);
 #endif
 }
+#endif  // KERNELLIB
 
 #if defined(__APPLE__)
 #include <malloc/malloc.h>
@@ -107,6 +109,7 @@ size_t swift::_swift_stdlib_malloc_size(const void *ptr) {
 #error No malloc_size analog known for this platform/libc.
 #endif
 
+#if !KERNELLIB
 static Lazy<std::mt19937> theGlobalMT19937;
 
 static std::mt19937 &getGlobalMT19937() {
@@ -147,3 +150,4 @@ void swift::_swift_stdlib_squareRootl(void *_self) {
   *(long double *)_self = std::sqrt(*(long double *)_self);
 }
 #endif // Have Float80
+#endif // KERNELLIB

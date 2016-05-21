@@ -69,7 +69,7 @@ set(SWIFTLIB_ESSENTIAL
   ImplicitlyUnwrappedOptional.swift
   Index.swift
   Indices.swift.gyb
-  InputStream.swift
+#  InputStream.swift
   IntegerArithmetic.swift.gyb
   IntegerParsing.swift.gyb
   Integers.swift.gyb

@@ -38,6 +38,7 @@ public func scan<
   return result
 }
 
+#if !KERNELLIB
 public func randomShuffle<T>(_ a: [T]) -> [T] {
   var result = a
   for i in (1..<a.count).reversed() {
@@ -49,6 +50,7 @@ public func randomShuffle<T>(_ a: [T]) -> [T] {
   }
   return result
 }
+#endif
 
 public func gather<C : Collection, IndicesSequence : Sequence>(
   _ collection: C, _ indices: IndicesSequence
