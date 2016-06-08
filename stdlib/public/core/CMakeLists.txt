@@ -29,12 +29,12 @@ set(SWIFTLIB_ESSENTIAL
   AssertCommon.swift
   BidirectionalCollection.swift
   Bool.swift
-  BridgeObjectiveC.swift
-  BridgeStorage.swift
+#  BridgeObjectiveC.swift
+#  BridgeStorage.swift
   Builtin.swift
-  BuiltinMath.swift.gyb
+#  BuiltinMath.swift.gyb
   Character.swift
-  CocoaArray.swift
+#  CocoaArray.swift
   Collection.swift
   CollectionAlgorithms.swift.gyb
   Comparable.swift
@@ -84,7 +84,7 @@ set(SWIFTLIB_ESSENTIAL
   Misc.swift
   MutableCollection.swift
   NewtypeWrapper.swift.gyb
-  ObjCMirrors.swift
+#  ObjCMirrors.swift
   ObjectIdentifier.swift
   Optional.swift
   OptionSet.swift
@@ -98,8 +98,8 @@ set(SWIFTLIB_ESSENTIAL
   RangeReplaceableCollection.swift.gyb
   ReflectionLegacy.swift
   Repeat.swift
-  REPL.swift
-  Reverse.swift
+#  REPL.swift
+#  Reverse.swift
   Runtime.swift.gyb
   SipHash.swift.gyb
   Sequence.swift
@@ -127,7 +127,7 @@ set(SWIFTLIB_ESSENTIAL
   StringUTF16.swift
   StringUTF8.swift
   SwiftNativeNSArray.swift
-  UnavailableStringAPIs.swift.gyb
+#  UnavailableStringAPIs.swift.gyb
   Unicode.swift
   UnicodeScalar.swift
   UnicodeTrie.swift.gyb
@@ -153,7 +153,7 @@ set(SWIFTLIB_SOURCES
   Tuple.swift.gyb
   UnfoldSequence.swift
   VarArgs.swift
-  Zip.swift
+  #Zip.swift
   )
 set(GROUP_INFO_JSON_FILE ${CMAKE_CURRENT_SOURCE_DIR}/GroupInfo.json)
 set(swift_core_link_flags "${SWIFT_RUNTIME_SWIFT_LINK_FLAGS}")
