@@ -36,7 +36,7 @@ git clone -b stable https://github.com/apple/swift-clang clang
 git clone https://github.com/apple/swift-cmark cmark
 git clone https://github.com/martine/ninja
 cd swift
-./utils/build-script --assertions --build-subdir=buildbot_linux --release -- --swift-enable-ast-verifier=0 --install-swift --install-prefix=/usr '--swift-install-components=autolink-driver;compiler;clang-builtin-headers;stdlib' --build-swift-static-stdlib --skip-test-lldb --install-destdir=$HOME/swift-kernel --reconfigure  --verbose-build --jobs=2 2>&1|tee build.log
+./utils/build-script  --no-swift-stdlib-assertions --build-subdir=buildbot_linux --release -- --swift-enable-ast-verifier=0 --install-swift --install-prefix=/usr '--swift-install-components=autolink-driver;compiler;clang-builtin-headers;stdlib' --build-swift-static-stdlib --skip-test-lldb --install-destdir=$HOME/swift-kernel --reconfigure  --verbose-build --jobs=2 2>&1|tee build.log
 ```
 
 This will install a compiler and stdlib in `~/swift-kernel`

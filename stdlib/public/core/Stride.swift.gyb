@@ -138,6 +138,8 @@ extension Strideable {
   }
 }
 
+
+#if !KERNELLIB
 extension Strideable where Stride : FloatingPoint {
   public static func _step(
     after current: (index: Int?, value: Self),
@@ -152,6 +154,8 @@ extension Strideable where Stride : FloatingPoint {
     return (current.value == start ? 1 : nil, current.value + distance)
   }
 }
+#endif
+
 
 /// An iterator for `StrideTo<Element>`.
 public struct StrideToIterator<Element : Strideable> : IteratorProtocol {
