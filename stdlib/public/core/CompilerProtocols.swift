@@ -743,9 +743,11 @@ public typealias DictionaryLiteralConvertible
 @available(*, deprecated, message: "it will be replaced or redesigned in Swift 4.0.  Instead of conforming to 'StringInterpolationConvertible', consider adding an 'init(_:String)'")
 public typealias StringInterpolationConvertible
   = ExpressibleByStringInterpolation
+#if !KERNELLIB
 @available(*, deprecated, renamed: "_ExpressibleByColorLiteral")
 public typealias _ColorLiteralConvertible
   = _ExpressibleByColorLiteral
+#endif
 @available(*, deprecated, renamed: "_ExpressibleByImageLiteral")
 public typealias _ImageLiteralConvertible
   = _ExpressibleByImageLiteral
