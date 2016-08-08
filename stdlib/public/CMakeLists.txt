@@ -42,6 +42,7 @@ endif()
 
 #if (SWIFT_STDLIB_DISABLE_REDZONE)
   list(APPEND SWIFT_CORE_CXX_FLAGS "-mno-red-zone" "-mno-mmx" "-mno-sse" "-mno-sse2" "-DKERNELLIB")
+  list(APPEND SWIFT_RUNTIME_CORE_CXX_FLAGS "-mno-red-zone" "-mno-mmx" "-mno-sse" "-mno-sse2" "-DKERNELLIB")
 #endif()
 
 if(SWIFT_BUILD_STDLIB)
