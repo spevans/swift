@@ -41,6 +41,7 @@ swift::_SwiftEmptyArrayStorage swift::_swiftEmptyArrayStorage = {
   }
 };
 
+#if !KERNELLIB
 static __swift_uint64_t randomUInt64() {
 #if defined(__APPLE__)
   return static_cast<__swift_uint64_t>(arc4random()) |
@@ -60,10 +61,16 @@ static __swift_uint64_t randomUInt64() {
   return result;
 #endif
 }
+#endif // !KERNELLIB
 
 SWIFT_ALLOWED_RUNTIME_GLOBAL_CTOR_BEGIN
 swift::_SwiftHashingSecretKey swift::_swift_stdlib_Hashing_secretKey = {
+#if !KERNELLIB
   randomUInt64(), randomUInt64()
+#else
+  // 'Random' numbers as KERNELLIB cant generate any at startup
+  0xDEADC0DE, 0xAABBCCDDEEFF
+#endif
 };
 SWIFT_ALLOWED_RUNTIME_GLOBAL_CTOR_END
 
