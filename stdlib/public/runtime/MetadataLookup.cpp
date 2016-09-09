@@ -92,10 +92,14 @@ namespace {
 #if defined(__APPLE__) && defined(__MACH__)
 static void _initializeCallbacksToInspectDylib();
 #else
+
+const void *__swift2_type_metadata_start = NULL;
+
 namespace swift {
   void _swift_initializeCallbacksToInspectDylib(
     void (*fnAddImageBlock)(const uint8_t *, size_t),
-    const char *sectionName);
+    const char *sectionName,
+    const void **sectionDataAddr);
 }
 
 static void _addImageTypeMetadataRecordsBlock(const uint8_t *records,
@@ -114,7 +118,8 @@ struct TypeMetadataState {
 #else
     _swift_initializeCallbacksToInspectDylib(
       _addImageTypeMetadataRecordsBlock,
-      SWIFT_TYPE_METADATA_SECTION);
+      SWIFT_TYPE_METADATA_SECTION,
+      &__swift2_type_metadata_start);
 #endif
   }
 

@@ -25,8 +25,10 @@
 #include <mach-o/dyld.h>
 #include <mach-o/getsect.h>
 #elif defined(__ELF__) || defined(__ANDROID__)
+#if !KERNELLIB
 #include <elf.h>
 #include <link.h>
+#endif // !KERNELLIB
 #endif
 
 #if defined(_MSC_VER)
@@ -235,10 +237,14 @@ namespace {
 #if defined(__APPLE__) && defined(__MACH__)
 static void _initializeCallbacksToInspectDylib();
 #else
+
+const void *__swift2_protocol_conformances_start = NULL;
+
 namespace swift {
   void _swift_initializeCallbacksToInspectDylib(
     void (*fnAddImageBlock)(const uint8_t *, size_t),
-    const char *sectionName);
+    const char *sectionName,
+    const void **sectionDataAddr);
 }
 
 static void _addImageProtocolConformancesBlock(const uint8_t *conformances,
@@ -257,7 +263,8 @@ struct ConformanceState {
 #else
     _swift_initializeCallbacksToInspectDylib(
       _addImageProtocolConformancesBlock,
-      SWIFT_PROTOCOL_CONFORMANCES_SECTION);
+      SWIFT_PROTOCOL_CONFORMANCES_SECTION,
+      &__swift2_protocol_conformances_start);
 #endif
   }
 
@@ -356,6 +363,7 @@ static void _initializeCallbacksToInspectDylib() {
 }
 
 #elif defined(__ELF__) || defined(__ANDROID__)
+#if !KERNELLIB
 static int _addImageProtocolConformances(struct dl_phdr_info *info,
                                           size_t size, void *data) {
   // inspectArgs contains addImage*Block function and the section name
@@ -390,10 +398,31 @@ static int _addImageProtocolConformances(struct dl_phdr_info *info,
   dlclose(handle);
   return 0;
 }
-
+#endif // !KERNELLIB
 void swift::_swift_initializeCallbacksToInspectDylib(
     void (*fnAddImageBlock)(const uint8_t *, size_t),
-    const char *sectionName) {
+    const char *sectionName,
+    const void **sectionDataAddr) {
+
+  fprintf(stderr, "sectionName: %s sectionDataAddr: %p *sectionDataAddr: %p\n",
+          sectionName, sectionDataAddr,
+          sectionDataAddr ? *sectionDataAddr : NULL);
+
+  if (*sectionDataAddr) {
+    auto blockAddr = reinterpret_cast<const uint8_t*>(sectionDataAddr);
+    fprintf(stderr, "blockAddr = %p\n", blockAddr);
+    auto blockSize = *reinterpret_cast<const uint64_t*>(blockAddr);
+    fprintf(stderr, "blockSize = %ld\n", blockSize);
+    blockAddr += sizeof(blockSize);
+    fprintf(stderr, "Adding blockAddr: %p, blockSize: %ld fn: %p\n",
+            blockAddr, blockSize, fnAddImageBlock);
+    fnAddImageBlock(blockAddr, blockSize);
+    return;
+  } else {
+    fprintf(stderr, "Cant find static data for %s\n", sectionName);
+    abort();
+  }
+#if !KERNELLIB
   InspectArgs inspectArgs = {fnAddImageBlock, sectionName};
 
   // Search the loaded dls. Unlike the above, this only searches the already
@@ -401,6 +430,7 @@ void swift::_swift_initializeCallbacksToInspectDylib(
   // FIXME: Find a way to have this continue to happen after.
   // rdar://problem/19045112
   dl_iterate_phdr(_addImageProtocolConformances, &inspectArgs);
+#endif
 }
 #elif defined(__CYGWIN__) || defined(_MSC_VER)
 static int _addImageProtocolConformances(struct dl_phdr_info *info,
@@ -440,7 +470,8 @@ static int _addImageProtocolConformances(struct dl_phdr_info *info,
 
 void swift::_swift_initializeCallbacksToInspectDylib(
     void (*fnAddImageBlock)(const uint8_t *, size_t),
-    const char *sectionName) {
+    const char *sectionName,
+    const void **sectionDataAddr) {
   InspectArgs inspectArgs = {fnAddImageBlock, sectionName};
 
   _swift_dl_iterate_phdr(_addImageProtocolConformances, &inspectArgs);
