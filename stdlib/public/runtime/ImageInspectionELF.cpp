@@ -19,83 +19,80 @@
 #if defined(__ELF__) || defined(__ANDROID__)
 
 #include "ImageInspection.h"
-#include <elf.h>
-#include <link.h>
+#include "../SwiftShims/Visibility.h"
+#include "swift/Basic/Lazy.h"
+#include "swift/Runtime/Mutex.h"
+#include <cassert>
+#include <vector>
 #include <dlfcn.h>
-#include <string.h>
 
 using namespace swift;
 
-/// The symbol name in the image that identifies the beginning of the
-/// protocol conformances table.
-static const char ProtocolConformancesSymbol[] =
-  ".swift2_protocol_conformances_start";
-/// The symbol name in the image that identifies the beginning of the
-/// type metadata record table.
-static const char TypeMetadataRecordsSymbol[] =
-  ".swift2_type_metadata_start";
+static Mutex *protocolConformanceLock = nullptr;
+static std::vector<SectionInfo> *protocolConformanceBlocks = nullptr;
 
-/// Context arguments passed down from dl_iterate_phdr to its callback.
-struct InspectArgs {
-  /// Symbol name to look up.
-  const char *symbolName;
-  /// Callback function to invoke with the metadata block.
-  void (*addBlock)(const void *start, uintptr_t size);
-};
+static Mutex *typeMetadataLock = nullptr;
+static std::vector<SectionInfo> *typeMetadataRecordBlocks = nullptr;
 
-static int iteratePHDRCallback(struct dl_phdr_info *info,
-                               size_t size, void *data) {
-  const InspectArgs *inspectArgs = reinterpret_cast<const InspectArgs *>(data);
-  void *handle;
-  if (!info->dlpi_name || info->dlpi_name[0] == '\0') {
-    handle = dlopen(nullptr, RTLD_LAZY);
-  } else {
-    handle = dlopen(info->dlpi_name, RTLD_LAZY | RTLD_NOLOAD);
+
+SWIFT_RUNTIME_EXPORT
+void swift::addImageProtocolConformanceBlock(const SectionInfo block) {
+  static OnceToken_t onceToken;
+  SWIFT_ONCE_F(onceToken, [](void *context) {
+      protocolConformanceBlocks = new std::vector<SectionInfo>();
+      protocolConformanceLock = new Mutex();
+    }, nullptr);
+
+  if (block.size > 0) {
+    ScopedLock guard(*protocolConformanceLock);
+    if (protocolConformanceBlocks == nullptr) {
+      addImageProtocolConformanceBlockCallback(block.data, block.size);
+    } else {
+      protocolConformanceBlocks->push_back(block);
+    }
   }
-
-  if (!handle) {
-    // Not a shared library.
-    return 0;
-  }
-
-  const char *conformances =
-    reinterpret_cast<const char*>(dlsym(handle, inspectArgs->symbolName));
-
-  if (!conformances) {
-    // if there are no conformances, don't hold this handle open.
-    dlclose(handle);
-    return 0;
-  }
-
-  // Extract the size of the conformances block from the head of the section.
-  uint64_t conformancesSize;
-  memcpy(&conformancesSize, conformances, sizeof(conformancesSize));
-  conformances += sizeof(conformancesSize);
-
-  inspectArgs->addBlock(conformances, conformancesSize);
-
-  dlclose(handle);
-  return 0;
 }
 
 void swift::initializeProtocolConformanceLookup() {
-  // Search the loaded dls. This only searches the already
-  // loaded ones.
-  // FIXME: Find a way to have this continue to happen for dlopen-ed images.
-  // rdar://problem/19045112
-  InspectArgs ProtocolConformanceArgs = {
-    ProtocolConformancesSymbol,
-    addImageProtocolConformanceBlockCallback
-  };
-  dl_iterate_phdr(iteratePHDRCallback, &ProtocolConformanceArgs);
+  assert(protocolConformanceLock != nullptr);
+  ScopedLock guard(*protocolConformanceLock);
+  if (protocolConformanceBlocks) {
+    for (auto block: *protocolConformanceBlocks) {
+      addImageProtocolConformanceBlockCallback(block.data, block.size);
+    }
+    delete protocolConformanceBlocks;
+    protocolConformanceBlocks = nullptr;
+  }
+}
+
+SWIFT_RUNTIME_EXPORT
+void swift::addImageTypeMetadataRecordBlock(const SectionInfo block) {
+  static OnceToken_t onceToken;
+  SWIFT_ONCE_F(onceToken, [](void *context) {
+      typeMetadataRecordBlocks = new std::vector<SectionInfo>();
+      typeMetadataLock = new Mutex();
+    }, nullptr);
+
+  if (block.size > 0) {
+    ScopedLock guard(*typeMetadataLock);
+    if (typeMetadataRecordBlocks == nullptr) {
+      addImageTypeMetadataRecordBlockCallback(block.data, block.size);
+    } else {
+      typeMetadataRecordBlocks->push_back(block);
+    }
+  }
 }
 
 void swift::initializeTypeMetadataRecordLookup() {
-  InspectArgs TypeMetadataRecordArgs = {
-    TypeMetadataRecordsSymbol,
-    addImageTypeMetadataRecordBlockCallback
-  };
-  dl_iterate_phdr(iteratePHDRCallback, &TypeMetadataRecordArgs);
+  assert(typeMetadataLock != nullptr);
+  ScopedLock guard(*typeMetadataLock);
+  if (typeMetadataRecordBlocks) {
+    for (auto block: *typeMetadataRecordBlocks) {
+      addImageTypeMetadataRecordBlockCallback(block.data, block.size);
+    }
+    delete typeMetadataRecordBlocks;
+    typeMetadataRecordBlocks = nullptr;
+  }
 }
 
 int swift::lookupSymbol(const void *address, SymbolInfo *info) {

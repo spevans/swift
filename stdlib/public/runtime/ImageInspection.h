@@ -30,6 +30,25 @@ namespace swift {
     void *symbolAddress;
   };
 
+#if defined(__ELF__) || defined(__ANDROID__)
+
+struct SectionInfo {
+  uint64_t size;
+  const char *data;
+};
+
+// These are defined in swift_sections.S to mark the start of a section with the
+// length of the data followed immediately by the section data
+struct alignas(uint64_t) Section;
+extern "C" const Section protocolConformancesStart asm(".swift2_protocol_conformances_start");
+extern "C" const Section typeMetadataStart asm(".swift2_type_metadata_start");
+
+// Called by injected constructors when a dynamic library is loaded
+void addImageProtocolConformanceBlock(const SectionInfo block);
+void addImageTypeMetadataRecordBlock(const SectionInfo block);
+
+#endif // defined(__ELF__) || defined(__ANDROID__)
+
 /// Load the metadata from the image necessary to find a type's
 /// protocol conformance.
 void initializeProtocolConformanceLookup();

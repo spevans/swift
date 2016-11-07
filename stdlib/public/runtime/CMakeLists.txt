@@ -62,6 +62,7 @@ set(LLVM_OPTIONAL_SOURCES
     MutexPThread.cpp
     MutexWin32.cpp
     CygwinPort.cpp
+    ImageInspectionInit.cpp
     ImageInspectionELF.cpp
     ImageInspectionStatic.cpp
     ${swift_runtime_sources}
@@ -137,6 +138,12 @@ foreach(sdk ${SWIFT_CONFIGURED_SDKS})
   endif()
 endforeach()
 
+add_swift_library(section_magic_loader OBJECT_LIBRARY IS_STDLIB IS_STDLIB_CORE
+    ImageInspectionInit.cpp
+    C_COMPILE_FLAGS ${swift_runtime_compile_flags}
+    TARGET_SDKS "${ELFISH_SDKS}"
+    LINK_FLAGS ${swift_runtime_linker_flags}
+    INSTALL_IN_COMPONENT never_install)
 add_swift_library(section_magic_begin OBJECT_LIBRARY IS_STDLIB IS_STDLIB_CORE
     swift_sections.S
     C_COMPILE_FLAGS ${swift_runtime_compile_flags} "-DSWIFT_BEGIN"
@@ -156,14 +163,21 @@ foreach(sdk ${ELFISH_SDKS})
     set(arch_subdir "${SWIFT_SDK_${sdk}_LIB_SUBDIR}/${arch}")
     set(arch_suffix "${SWIFT_SDK_${sdk}_LIB_SUBDIR}-${arch}")
 
+    set(section_magic_loader_name "section_magic_loader-${arch_suffix}")
     set(section_magic_begin_name "section_magic_begin-${arch_suffix}")
     set(section_magic_end_name "section_magic_end-${arch_suffix}")
+    if(SWIFT_ENABLE_GOLD_LINKER)
+      set(LD_COMMAND "gold")
+    else()
+      set(LD_COMMAND "ld")
+    endif()
 
     add_custom_command_target(section_magic_${arch_suffix}_objects
       COMMAND
-          "${CMAKE_COMMAND}" -E copy
+          # Merge ImageInspectionInit.o + swift_sections.S(BEGIN) => swift_begin.o
+          ${LD_COMMAND} -r -o "${SWIFTLIB_DIR}/${arch_subdir}/swift_begin.o"
           "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${section_magic_begin_name}.dir/swift_sections.S${CMAKE_C_OUTPUT_EXTENSION}"
-          "${SWIFTLIB_DIR}/${arch_subdir}/swift_begin.o"
+          "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${section_magic_loader_name}.dir/ImageInspectionInit.cpp${CMAKE_C_OUTPUT_EXTENSION}"
       COMMAND
           "${CMAKE_COMMAND}" -E copy
           "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${section_magic_end_name}.dir/swift_sections.S${CMAKE_C_OUTPUT_EXTENSION}"
@@ -172,6 +186,7 @@ foreach(sdk ${ELFISH_SDKS})
           "${SWIFTLIB_DIR}/${arch_subdir}/swift_begin.o"
           "${SWIFTLIB_DIR}/${arch_subdir}/swift_end.o"
       DEPENDS
+          ${section_magic_loader_name}
           ${section_magic_begin_name}
           ${section_magic_end_name})
 
