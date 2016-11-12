@@ -43,12 +43,4 @@ swift::initializeTypeMetadataRecordLookup() {
     __swift2_type_metadata_start.size);
 }
 
-// This is called from Errors.cpp when dumping a stack trace entry.
-// It could be implemented by parsing the ELF information in the
-// executable. For now it returns 0 for error (cant lookup address).
-int
-swift::_swift_dladdr(const void* addr, Dl_info* info) {
-  return 0;
-}
-
 #endif

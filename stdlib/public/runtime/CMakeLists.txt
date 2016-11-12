@@ -64,6 +64,7 @@ set(LLVM_OPTIONAL_SOURCES
     CygwinPort.cpp
     ImageInspectionELF.cpp
     ImageInspectionStatic.cpp
+    StaticBinaryELF.cpp
     ${swift_runtime_sources}
     ${swift_runtime_objc_sources}
     ${swift_runtime_leaks_sources})
@@ -78,7 +79,7 @@ if(SWIFT_BUILD_STATIC_STDLIB AND "${sdk}" STREQUAL "LINUX")
   string(TOLOWER "${sdk}" lowercase_sdk)
 
   # These two libaries are only used with the static swiftcore
-  add_library(swiftImageInspectionStatic STATIC ImageInspectionStatic.cpp)
+  add_library(swiftImageInspectionStatic STATIC ImageInspectionStatic.cpp StaticBinaryELF.cpp)
   set_target_properties(swiftImageInspectionStatic PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${SWIFTSTATICLIB_DIR}/${lowercase_sdk}")
 
