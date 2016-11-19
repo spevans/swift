@@ -20,6 +20,7 @@
 #define SWIFT_RUNTIME_IMAGE_INSPECTION_H
 
 #include <cstdint>
+#include <dlfcn.h>
 
 namespace swift {
 
@@ -37,6 +38,8 @@ void addImageProtocolConformanceBlockCallback(const void *start,
 void addImageTypeMetadataRecordBlockCallback(const void *start,
                                              uintptr_t size);
 
+// Platform independant dladdr()
+int _swift_dladdr(const void* addr, Dl_info* info);
 } // end namespace swift
 
 #endif // SWIFT_RUNTIME_IMAGE_INSPECTION_H

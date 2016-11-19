@@ -21,7 +21,6 @@
 #include "ImageInspection.h"
 #include <elf.h>
 #include <link.h>
-#include <dlfcn.h>
 #include <string.h>
 
 using namespace swift;
@@ -96,6 +95,10 @@ void swift::initializeTypeMetadataRecordLookup() {
     addImageTypeMetadataRecordBlockCallback
   };
   dl_iterate_phdr(iteratePHDRCallback, &TypeMetadataRecordArgs);
+}
+
+int swift::_swift_dladdr(const void* addr, Dl_info* info) {
+  return dladdr(addr, info);
 }
 
 #endif // defined(__ELF__) || defined(__ANDROID__)

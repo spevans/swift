@@ -21,7 +21,6 @@
 #include "swift/Runtime/Mutex.h"
 #include "ImageInspection.h"
 #include "Private.h"
-#include <dlfcn.h>
 
 using namespace swift;
 
@@ -36,7 +35,7 @@ static const char *class_getName(const ClassMetadata* type) {
 template<> void ProtocolConformanceRecord::dump() const {
   auto symbolName = [&](const void *addr) -> const char * {
     Dl_info info;
-    int ok = dladdr(addr, &info);
+    int ok = _swift_dladdr(addr, &info);
     if (!ok)
       return "<unknown addr>";
     return info.dli_sname;

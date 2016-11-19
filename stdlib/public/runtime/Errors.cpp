@@ -35,6 +35,7 @@
 #include "swift/Basic/Demangle.h"
 #include "swift/Basic/LLVM.h"
 #include "llvm/ADT/StringRef.h"
+#include "ImageInspection.h"
 #if !defined(_MSC_VER)
 #include <cxxabi.h>
 #endif
@@ -108,7 +109,7 @@ static void dumpStackTraceEntry(unsigned index, void *framePC) {
   // 0 is failure for dladdr. We do not use nullptr since it is an int
   // argument. This violates normal unix patterns. See man page for dladdr on OS
   // X.
-  if (0 == dladdr(framePC, &dlinfo)) {
+  if (0 == _swift_dladdr(framePC, &dlinfo)) {
     return;
   }
 

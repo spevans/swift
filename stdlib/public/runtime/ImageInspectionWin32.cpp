@@ -216,4 +216,8 @@ void swift::initializeTypeMetadataRecordLookup() {
   _swift_dl_iterate_phdr(_addImageCallback, &TypeMetadataRecordsArgs);
 }
 
+int swift::_swift_dladdr(const void* addr, Dl_info* info) {
+  return dladdr(addr, info);
+}
+
 #endif // defined(_MSC_VER) || defined(__CYGWIN__)

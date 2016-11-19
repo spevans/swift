@@ -70,4 +70,8 @@ void swift::initializeTypeMetadataRecordLookup() {
   
 }
 
+int swift::_swift_dladdr(const void* addr, Dl_info* info) {
+  return dladdr(addr, info);
+}
+
 #endif // defined(__APPLE__) && defined(__MACH__)
