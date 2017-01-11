@@ -418,8 +418,8 @@ bool TaskQueue::execute(TaskBeganCallback Began, TaskFinishedCallback Finished,
 
             if (Signalled) {
               TaskFinishedResponse Response =
-                  Signalled(T.getPid(), ErrorMsg, T.getOutput(), T.getErrors(),
-                            T.getContext());
+                  Signalled(T.getPid(), Signal, ErrorMsg, T.getOutput(),
+                            T.getErrors(), T.getContext());
               if (Response == TaskFinishedResponse::StopExecution)
                 // If we have a TaskCrashedCallback, only set SubtaskFailed to
                 // true if the callback returns StopExecution.

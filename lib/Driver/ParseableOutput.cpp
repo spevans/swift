@@ -201,15 +201,17 @@ public:
 
 class SignalledMessage : public TaskOutputMessage {
   std::string ErrorMsg;
+  int Signal;
 public:
-  SignalledMessage(const Job &Cmd, ProcessId Pid, StringRef Output,
+  SignalledMessage(const Job &Cmd, ProcessId Pid, int Signal, StringRef Output,
                    StringRef ErrorMsg) : TaskOutputMessage("signalled", Cmd,
                                                            Pid, Output),
-                                         ErrorMsg(ErrorMsg) {}
+                                         ErrorMsg(ErrorMsg), Signal(Signal) {}
 
   void provideMapping(swift::json::Output &out) override {
     TaskOutputMessage::provideMapping(out);
     out.mapOptional("error-message", ErrorMsg, std::string());
+    out.mapRequired("signal", Signal);
   }
 };
 
@@ -259,9 +261,9 @@ void parseable_output::emitFinishedMessage(raw_ostream &os,
 
 void parseable_output::emitSignalledMessage(raw_ostream &os,
                                             const Job &Cmd, ProcessId Pid,
-                                            StringRef ErrorMsg,
+                                            int Signal, StringRef ErrorMsg,
                                             StringRef Output) {
-  SignalledMessage msg(Cmd, Pid, Output, ErrorMsg);
+  SignalledMessage msg(Cmd, Pid, Signal, Output, ErrorMsg);
   emitMessage(os, msg);
 }
 

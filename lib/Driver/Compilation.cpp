@@ -613,8 +613,8 @@ int Compilation::performJobsImpl() {
     return TaskFinishedResponse::ContinueExecution;
   };
 
-  auto taskSignalled = [&](ProcessId Pid, StringRef ErrorMsg, StringRef Output,
-                           StringRef Errors,
+  auto taskSignalled = [&](ProcessId Pid, int Signal, StringRef ErrorMsg,
+                           StringRef Output, StringRef Errors,
                            void *Context) -> TaskFinishedResponse {
     const Job *SignalledCmd = (const Job *)Context;
 
@@ -625,7 +625,7 @@ int Compilation::performJobsImpl() {
     if (Level == OutputLevel::Parseable) {
       // Parseable output was requested.
       parseable_output::emitSignalledMessage(llvm::errs(), *SignalledCmd, Pid,
-                                             ErrorMsg, Output);
+                                             Signal, ErrorMsg, Output);
     } else {
       // Otherwise, send the buffered output to stderr, though only if we
       // support getting buffered output.

@@ -113,7 +113,8 @@ bool TaskQueue::execute(TaskBeganCallback Began, TaskFinishedCallback Finished,
       // a signal during execution.
       if (Signalled) {
         TaskFinishedResponse Response =
-            Signalled(PI.Pid, ErrMsg, StringRef(), StringRef(), T->Context);
+            Signalled(PI.Pid, /*Signal*/0, ErrMsg, StringRef(), StringRef(),
+                      T->Context);
         ContinueExecution = Response != TaskFinishedResponse::StopExecution;
       } else {
         // If we don't have a Signalled callback, unconditionally stop.

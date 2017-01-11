@@ -87,6 +87,7 @@ public:
   /// to a signal.
   ///
   /// \param Pid the ProcessId of the task which exited abnormally.
+  /// \param Signal the signal number.
   /// \param ErrorMsg a string describing why the task exited abnormally. If
   /// no reason could be deduced, this may be empty.
   /// \param Output the output from the task which exited abnormally, if
@@ -98,8 +99,10 @@ public:
   ///
   /// \returns a TaskFinishedResponse indicating whether or not execution
   /// should proceed
-  typedef std::function<TaskFinishedResponse(ProcessId Pid, StringRef ErrorMsg,
-                                             StringRef Output, StringRef Errors, void *Context)>
+  typedef std::function<TaskFinishedResponse(ProcessId Pid, int Signal,
+                                             StringRef ErrorMsg,
+                                             StringRef Output, StringRef Errors,
+                                             void *Context)>
     TaskSignalledCallback;
 #pragma clang diagnostic pop
 
